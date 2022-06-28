@@ -1,2 +1,4 @@
 ### Hexlet tests and linter status:
 [![Actions Status](https://github.com/reznikovAndrey/frontend-project-lvl3/workflows/hexlet-check/badge.svg)](https://github.com/reznikovAndrey/frontend-project-lvl3/actions) [![Eslint check](https://github.com/reznikovAndrey/frontend-project-lvl3/workflows/linter-check/badge.svg)](https://github.com/reznikovAndrey/frontend-project-lvl3/actions) [![Maintainability](https://api.codeclimate.com/v1/badges/690dbafac612e56ab85e/maintainability)](https://codeclimate.com/github/reznikovAndrey/frontend-project-lvl3/maintainability)
+
+[Deployed project on vercel](https://frontend-project-lvl3-six-bay.vercel.app/)
