@@ -1,19 +1,10 @@
-import * as yup from 'yup';
+import i18next from 'i18next';
 
 import getWatchedState from './views.js';
+import resources from './locales/index.js';
+import validate from './validation.js';
 
-const successMessage = 'Rss was successfully loaded!';
-
-const validate = (url, feeds) => {
-  const schema = yup.string().trim()
-    .required('Please, provide RSS link')
-    .url('RSS link must be a valid URL')
-    .notOneOf(feeds, 'This RSS link was already loaded');
-
-  return schema.validate(url).then(() => ([])).catch(({ errors }) => errors);
-};
-
-export default () => {
+const runApp = (t) => {
   const state = {
     rssForm: {
       valid: false,
@@ -29,9 +20,9 @@ export default () => {
     feedbackContainer: document.querySelector('.feedback'),
   };
 
-  const watchedState = getWatchedState(state, elements);
+  const watchedState = getWatchedState(state, elements, t);
 
-  const { form } = elements;
+  const { form, input } = elements;
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -39,16 +30,28 @@ export default () => {
     const url = formData.get('url');
     const { feeds } = watchedState;
 
-    validate(url, feeds).then((errors) => {
-      const haveErrors = errors.length !== 0;
-      if (haveErrors) {
+    validate(url, feeds).then(({ success, feedback }) => {
+      watchedState.rssForm.feedback = feedback;
+      if (!success) {
         watchedState.rssForm.valid = false;
-        watchedState.rssForm.feedback = errors.join('\n');
-      } else {
-        watchedState.rssForm.valid = true;
-        watchedState.rssForm.feedback = successMessage;
-        watchedState.feeds.push(url);
+        return;
       }
+
+      watchedState.rssForm.valid = true;
+      watchedState.feeds.push(url);
+      form.reset();
+      input.focus();
     });
   });
+};
+
+export default () => {
+  const defaultLng = 'en';
+  const i18nextInstance = i18next.createInstance();
+
+  i18nextInstance.init({
+    lng: defaultLng,
+    debug: true,
+    resources,
+  }).then((t) => runApp(t));
 };
