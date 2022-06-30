@@ -29,6 +29,7 @@
     "webpack-cli": "^4.10.0"
   },
   "dependencies": {
+    "axios": "^0.27.2",
     "bootstrap": "^5.1.3",
     "i18next": "^21.8.11",
     "on-change": "^4.0.1",
