@@ -3,21 +3,16 @@ import * as yup from 'yup';
 export default (url, feeds) => {
   yup.setLocale({
     mixed: {
-      required: 'emptyInput',
-      notOneOf: 'linkAlreadyWasLoaded',
+      required: 'form.errorMessages.emptyInput',
+      notOneOf: 'form.errorMessages.linkAlreadyWasLoaded',
     },
     string: {
-      url: 'invalidUrl',
+      url: 'form.errorMessages.invalidUrl',
     },
   });
 
   const schema = yup.string().required().url()
     .notOneOf(feeds);
 
-  return schema.validate(url.trim())
-    .then(() => ({ success: true, feedback: ['form.successMessage'] }))
-    .catch(({ errors }) => ({
-      success: false,
-      feedback: errors.map((key) => `form.errorMessages.${key}`),
-    }));
+  return schema.validate(url.trim()).then(() => ['form.successMessage']);
 };

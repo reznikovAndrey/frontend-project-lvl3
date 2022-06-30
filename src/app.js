@@ -30,17 +30,24 @@ const runApp = (t) => {
     const url = formData.get('url');
     const { feeds } = watchedState;
 
-    validate(url, feeds).then(({ success, feedback }) => {
-      watchedState.rssForm.feedback = feedback;
-      if (!success) {
-        watchedState.rssForm.valid = false;
-        return;
-      }
-
+    validate(url, feeds).then((successFeedback) => {
       watchedState.rssForm.valid = true;
+      watchedState.rssForm.feedback = successFeedback;
       watchedState.feeds.push(url);
       form.reset();
       input.focus();
+    }).catch((err) => {
+      const { name } = err;
+      switch (name) {
+        case 'ValidationError': {
+          const { errors } = err;
+          watchedState.rssForm.valid = false;
+          watchedState.rssForm.feedback = errors;
+          break;
+        }
+        default:
+          break;
+      }
     });
   });
 };
