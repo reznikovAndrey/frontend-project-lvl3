@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 
-export default (url, feeds) => {
+export default (targetUrl, feeds) => {
   yup.setLocale({
     mixed: {
       required: 'form.errorMessages.emptyInput',
@@ -12,7 +12,7 @@ export default (url, feeds) => {
   });
 
   const schema = yup.string().required().url()
-    .notOneOf(feeds);
+    .notOneOf(feeds.map(({ url }) => url));
 
-  return schema.validate(url.trim()).then(() => ['form.successMessage']);
+  return schema.validate(targetUrl.trim());
 };
