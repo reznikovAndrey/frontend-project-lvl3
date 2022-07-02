@@ -1,10 +1,11 @@
 import onChange from 'on-change';
+import { last } from 'lodash';
 
-import { buildHTML, buildFeedsHTML, buildPostsHTML } from './utils.js';
+import { buildHTML, buildFeedHTML, buildPostHTML } from './utils.js';
 
 export default (state, elements, t) => onChange(state, (path, value) => {
   const {
-    form, input, submitBtn, feedbackContainer, feedsContainer, postsContainer,
+    form, input, submitBtn, feedbackContainer, feedsContainer, postsContainer, modal,
   } = elements;
 
   if (path === 'rssForm.state') {
@@ -58,12 +59,35 @@ export default (state, elements, t) => onChange(state, (path, value) => {
   }
 
   if (path === 'feeds') {
-    const items = value.map((feedData) => buildFeedsHTML(feedData));
+    const items = value.map((feedData) => buildFeedHTML(feedData));
     buildHTML(feedsContainer, items, 'feeds.title', t);
   }
 
   if (path === 'posts') {
-    const items = value.map((postData) => buildPostsHTML(postData, t));
+    const { UIState: { shownPosts } } = state;
+
+    const items = value.map((postData) => {
+      const wasShown = shownPosts.map(({ postId }) => postId).includes(postData.id);
+      return buildPostHTML(postData, wasShown, t);
+    });
     buildHTML(postsContainer, items, 'posts.title', t);
+  }
+
+  if (path.includes('UIState.shownPosts')) {
+    const { postId } = last(value);
+    const { title, description, link } = state.posts.find(({ id }) => id === postId);
+
+    const targetEl = document.querySelector(`a[data-id="${postId}"]`);
+    targetEl.classList.remove('fw-bold');
+    targetEl.classList.add('fw-normal');
+
+    const modalTitle = modal.querySelector('.modal-title');
+    modalTitle.textContent = title;
+
+    const modalBody = modal.querySelector('.modal-body');
+    modalBody.textContent = description;
+
+    const linkBtn = modal.querySelector('a[role="button"]');
+    linkBtn.href = link;
   }
 });

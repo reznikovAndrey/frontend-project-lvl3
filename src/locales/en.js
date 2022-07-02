@@ -10,7 +10,7 @@ export default {
     successMessage: 'Rss was successfully loaded!',
     errorMessages: {
       network: 'Network error',
-      parsing: 'Problems with parsing, please, check xml provided from link',
+      parsing: 'Looks like problems with parsing, please, check xml provided from link',
     },
     feeds: {
       title: 'Feeds',

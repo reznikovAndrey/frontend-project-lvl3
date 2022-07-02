@@ -21,6 +21,9 @@ const runApp = (t) => {
     feeds: [],
     posts: [],
     activeTimerId: null,
+    UIState: {
+      shownPosts: [],
+    },
   };
 
   const elements = {
@@ -30,6 +33,7 @@ const runApp = (t) => {
     feedbackContainer: document.querySelector('.feedback'),
     feedsContainer: document.querySelector('.feeds'),
     postsContainer: document.querySelector('.posts'),
+    modal: document.querySelector('#modal'),
   };
 
   const watchedState = getWatchedState(state, elements, t);
@@ -53,7 +57,8 @@ const runApp = (t) => {
     });
   };
 
-  const { form } = elements;
+  const { form, postsContainer } = elements;
+
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -98,6 +103,13 @@ const runApp = (t) => {
       }
     });
   });
+
+  postsContainer.addEventListener('click', (e) => {
+    const postId = e.target.dataset.id;
+    const targetPost = watchedState.posts.find(({ id }) => id === postId);
+
+    watchedState.UIState.shownPosts.push({ postId: targetPost.id });
+  }, true);
 };
 
 export default () => {

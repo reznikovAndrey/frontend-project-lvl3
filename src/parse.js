@@ -10,6 +10,7 @@ export default ({ contents }) => {
   const postsData = parsedData.querySelectorAll('item');
   const posts = [...postsData].map((item) => ({
     title: item.querySelector('title').textContent,
+    description: item.querySelector('description').textContent,
     link: item.querySelector('link').textContent,
   }));
 

@@ -35,7 +35,7 @@ export const buildHTML = (container, items, titleKey, t) => {
   container.replaceChildren(card);
 };
 
-export const buildFeedsHTML = ({ title, description }) => {
+export const buildFeedHTML = ({ title, description }) => {
   const listItem = document.createElement('li');
   listItem.classList.add('list-group-item', 'border-0', 'border-end-0');
 
@@ -48,12 +48,12 @@ export const buildFeedsHTML = ({ title, description }) => {
   return listItem;
 };
 
-export const buildPostsHTML = ({ link, title, id }, t) => {
+export const buildPostHTML = ({ link, title, id }, wasPostShown, t) => {
   const listItem = document.createElement('li');
   listItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
 
   const itemLink = document.createElement('a');
-  itemLink.classList.add('fw-bold');
+  itemLink.classList.add(wasPostShown ? 'fw-normal' : 'fw-bold');
   itemLinkAttrs.href = link;
   itemLinkAttrs['data-id'] = id;
   setAttributes(itemLink, itemLinkAttrs);
