@@ -1,11 +1,13 @@
 import i18next from 'i18next';
-import axios from 'axios';
 import { uniqueId } from 'lodash';
 
 import getWatchedState from './views.js';
 import resources from './locales/index.js';
 import validate from './validation.js';
 import parse from './parser.js';
+import fetchData from './fetcher.js';
+
+const DELAY = 5000;
 
 const runApp = (t) => {
   const state = {
@@ -17,6 +19,7 @@ const runApp = (t) => {
     },
     feeds: [],
     posts: [],
+    activeTimerId: null,
   };
 
   const elements = {
@@ -30,6 +33,16 @@ const runApp = (t) => {
 
   const watchedState = getWatchedState(state, elements, t);
 
+  const updatePosts = () => {
+    const { feeds, activeTimerId } = watchedState;
+    clearTimeout(activeTimerId);
+
+    const promises = feeds.map(({ url }) => fetchData(url));
+    return Promise.all(promises).finally(() => {
+      watchedState.activeTimerId = setTimeout(updatePosts, DELAY);
+    });
+  };
+
   const { form } = elements;
   form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -42,7 +55,7 @@ const runApp = (t) => {
       watchedState.rssForm.state = 'valid';
       watchedState.processState = 'loading';
 
-      return axios.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`);
+      return fetchData(url);
     }).then(({ data }) => {
       const { feed, posts } = parse(data);
 
@@ -54,6 +67,7 @@ const runApp = (t) => {
       watchedState.feeds.unshift(feed);
       watchedState.posts = [...postsLinkedWithFeed, ...watchedState.posts];
       watchedState.processState = 'loaded';
+      watchedState.activeTimerId = setTimeout(updatePosts, DELAY);
     }).catch((err) => {
       watchedState.processState = 'error';
       const { name } = err;
