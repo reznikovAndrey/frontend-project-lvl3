@@ -1,11 +1,12 @@
 import i18next from 'i18next';
-import { uniqueId } from 'lodash';
+import { differenceBy } from 'lodash';
 
-import getWatchedState from './views.js';
+import getWatchedState from './view.js';
 import resources from './locales/index.js';
-import validate from './validation.js';
-import parse from './parser.js';
-import fetchData from './fetcher.js';
+import validate from './validate.js';
+import parse from './parse.js';
+import fetchData from './fetch.js';
+import { modifyFeed, modifyPosts } from './modify.js';
 
 const DELAY = 5000;
 
@@ -38,7 +39,16 @@ const runApp = (t) => {
     clearTimeout(activeTimerId);
 
     const promises = feeds.map(({ url }) => fetchData(url));
-    return Promise.all(promises).finally(() => {
+    return Promise.all(promises).then((res) => {
+      const freshPosts = res.map(({ data }, idx) => {
+        const { posts } = parse(data);
+        const { id: feedId } = feeds[idx];
+
+        const freshFeedPosts = differenceBy(posts, state.posts, 'link');
+        return modifyPosts(freshFeedPosts, feedId);
+      }).flat();
+      watchedState.posts = [...freshPosts, ...state.posts];
+    }).finally(() => {
       watchedState.activeTimerId = setTimeout(updatePosts, DELAY);
     });
   };
@@ -58,14 +68,11 @@ const runApp = (t) => {
       return fetchData(url);
     }).then(({ data }) => {
       const { feed, posts } = parse(data);
+      const modifiedFeed = modifyFeed(feed, url);
+      const modifiedPosts = modifyPosts(posts, modifiedFeed.id);
 
-      feed.id = uniqueId('feed-');
-      feed.url = url;
-
-      const postsLinkedWithFeed = posts.map((post) => ({ ...post, feedId: feed.id, id: uniqueId('post-') }));
-
-      watchedState.feeds.unshift(feed);
-      watchedState.posts = [...postsLinkedWithFeed, ...watchedState.posts];
+      watchedState.feeds = [modifiedFeed, ...state.feeds];
+      watchedState.posts = [...modifiedPosts, ...state.posts];
       watchedState.processState = 'loaded';
       watchedState.activeTimerId = setTimeout(updatePosts, DELAY);
     }).catch((err) => {
