@@ -18,5 +18,6 @@ export default {
     posts: {
       title: 'Posts',
     },
+    openModalButtonText: 'Show more',
   },
 };

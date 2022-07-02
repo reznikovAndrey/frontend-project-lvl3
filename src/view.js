@@ -1,22 +1,6 @@
 import onChange from 'on-change';
 
-const buildHTML = (container, items, titleKey, t) => {
-  const card = document.createElement('div');
-  card.classList.add('card', 'border-0');
-
-  const cardBody = document.createElement('div');
-  cardBody.classList.add('card-body');
-  const header = document.createElement('h2');
-  header.textContent = t(titleKey);
-  cardBody.append(header);
-
-  const list = document.createElement('ul');
-  list.classList.add('list-group', 'border-0', 'rounded-0');
-  list.replaceChildren(...items);
-
-  card.replaceChildren(cardBody, list);
-  container.replaceChildren(card);
-};
+import { buildHTML, buildFeedsHTML, buildPostsHTML } from './utils.js';
 
 export default (state, elements, t) => onChange(state, (path, value) => {
   const {
@@ -74,36 +58,12 @@ export default (state, elements, t) => onChange(state, (path, value) => {
   }
 
   if (path === 'feeds') {
-    const items = value.map(({ title, description }) => {
-      const listItem = document.createElement('li');
-      listItem.classList.add('list-group-item', 'border-0', 'border-end-0');
-
-      const itemTitle = document.createElement('h3');
-      itemTitle.textContent = title;
-      const itemDesc = document.createElement('p');
-      itemDesc.textContent = description;
-
-      listItem.append(itemTitle, itemDesc);
-      return listItem;
-    });
+    const items = value.map((feedData) => buildFeedsHTML(feedData));
     buildHTML(feedsContainer, items, 'feeds.title', t);
   }
 
   if (path === 'posts') {
-    const items = value.map(({ link, title }) => {
-      const listItem = document.createElement('li');
-      listItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
-
-      const itemLink = document.createElement('a');
-      itemLink.classList.add('fw-bold');
-      itemLink.setAttribute('href', link);
-      itemLink.setAttribute('target', '_blank');
-      itemLink.setAttribute('rel', 'noopener noreferrer');
-      itemLink.textContent = title;
-
-      listItem.append(itemLink);
-      return listItem;
-    });
+    const items = value.map((postData) => buildPostsHTML(postData, t));
     buildHTML(postsContainer, items, 'posts.title', t);
   }
 });
