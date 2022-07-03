@@ -1,12 +1,11 @@
 import i18next from 'i18next';
 import { differenceBy } from 'lodash';
 
-import getWatchedState from './view.js';
 import resources from './locales/index.js';
-import validate from './validate.js';
-import parse from './parse.js';
-import fetchData from './fetch.js';
-import { modifyFeed, modifyPosts } from './modify.js';
+import getWatchedState from './view/index.js';
+import {
+  validate, parse, fetchData, modifyFeed, modifyPosts,
+} from './utils/index.js';
 
 const DELAY = 5000;
 
