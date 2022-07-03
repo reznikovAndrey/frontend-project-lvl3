@@ -112,7 +112,7 @@ const runApp = (t) => {
 };
 
 export default () => {
-  const defaultLng = 'en';
+  const defaultLng = 'ru';
   const i18nextInstance = i18next.createInstance();
 
   i18nextInstance.init({
