@@ -4,7 +4,7 @@ import { differenceBy } from 'lodash';
 import resources from './locales/index.js';
 import getWatchedState from './view/index.js';
 import {
-  validate, parse, fetchData, modifyFeed, modifyPosts, DELAY,
+  validate, parse, fetchData, modifyFeed, modifyPosts, DELAY, DEFAULT_LNG,
 } from './utils/index.js';
 
 const runApp = (t) => {
@@ -110,11 +110,10 @@ const runApp = (t) => {
 };
 
 export default () => {
-  const defaultLng = 'ru';
   const i18nextInstance = i18next.createInstance();
 
   i18nextInstance.init({
-    lng: defaultLng,
+    lng: DEFAULT_LNG,
     resources,
   }).then((t) => runApp(t));
 };

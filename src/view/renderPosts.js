@@ -1,15 +1,15 @@
 import buildHTML from './utils.js';
 
-export const POSTS_TITLE_KEY = 'posts.title';
+const POSTS_TITLE_KEY = 'posts.title';
 
-export const itemLinkAttrs = {
+const itemLinkAttrs = {
   href: '#',
   'data-id': '',
   target: '_blank',
   rel: 'noopener noreferrer',
 };
 
-export const btnAttrs = {
+const btnAttrs = {
   type: 'button',
   'data-id': '',
   'data-bs-toggle': 'modal',
@@ -45,5 +45,5 @@ export default (posts, state, { postsContainer }, t) => {
     listItem.append(itemLink, btn);
     return listItem;
   });
-  buildHTML(postsContainer, items, 'posts.title', t);
+  buildHTML(postsContainer, items, POSTS_TITLE_KEY, t);
 };

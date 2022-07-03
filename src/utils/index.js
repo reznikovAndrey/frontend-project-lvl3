@@ -4,3 +4,5 @@ export { default as validate } from './validate.js';
 export * from './modify.js';
 
 export const DELAY = 5000;
+
+export const DEFAULT_LNG = 'ru';
