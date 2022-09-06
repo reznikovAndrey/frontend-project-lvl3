@@ -6,12 +6,10 @@ export default () => ({
   entry: {
     index: {
       import: './src/index.js',
-      dependOn: 'shared',
     },
-    shared: ['lodash', 'i18next', 'bootstrap', '@popperjs/core', 'axios'],
   },
   output: {
-    filename: '[name].bundle.js',
+    filename: 'bundle.js',
     path: path.join(path.resolve(), './dist'),
     clean: true,
   },
@@ -28,4 +26,7 @@ export default () => ({
       template: 'index.html',
     }),
   ],
+  performance: {
+    hints: false,
+  },
 });
